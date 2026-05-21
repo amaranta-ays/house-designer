@@ -32,8 +32,8 @@ git clone --branch v0.1.0 https://github.com/amaranta-ays/house-designer.git ~/a
 
 ## Release flow
 
-1. Edit `agent.md`, `references/*`, or `knowledge/*`.
-2. Bump the version in the front matter of `agent.md` (if you adopt one) and in `CHANGELOG.md`.
+1. Edit the source of truth — usually `~/ai-lab/knowledge/house-style/*` for the design rules, or `agent.md` / `references/*` for the persona logic.
+2. If you edited the house-style knowledge, run `~/ai-lab/scripts/sync-house-style.ps1` to refresh the bundled `knowledge/` snapshot in this repo.
 3. Commit + push.
 4. `git tag vX.Y.Z && git push origin vX.Y.Z`.
 5. Consumers re-clone or `git pull` then `git checkout vX.Y.Z`.
