@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Margin compression returned in Q3. — One-Pager</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-fg: #0A0A0A;
+    --color-fg-secondary: #374151;
+    --color-fg-tertiary: #6B7280;
+    --color-bg: #FAFAF8;
+    --color-border: #D6CDB8;
+    --color-accent: #134E4A;
+    --space-2: 8px; --space-3: 12px; --space-4: 16px;
+    --space-6: 24px; --space-8: 32px; --space-12: 48px;
+  }
+  @page { size: A4; margin: 18mm; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--color-bg);
+    color: var(--color-fg);
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 1.6;
+    letter-spacing: -0.01em;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .doc {
+    width: 100%;
+    max-width: 800px;
+    padding: var(--space-12) var(--space-8);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: var(--space-8);
+    align-items: start;
+  }
+  .doc header { grid-column: 1 / -1; }
+  .doc footer { grid-column: 1 / -1; }
+  .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-accent);
+    margin-bottom: var(--space-3);
+  }
+  h1 {
+    font-size: 32px;
+    font-weight: 500;
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+    margin: 0 0 var(--space-3);
+    color: var(--color-fg);
+  }
+  .subtitle {
+    font-size: 20px;
+    font-style: italic;
+    font-weight: 400;
+    color: var(--color-fg-secondary);
+    margin: 0 0 var(--space-6);
+  }
+  .key-metric .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-feature-settings: "tnum";
+    font-size: 48px;
+    font-weight: 500;
+    color: var(--color-accent);
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .key-metric .caption {
+    font-size: 12px;
+    color: var(--color-fg-tertiary);
+    margin-top: var(--space-2);
+  }
+  .narrative p { margin: 0 0 var(--space-3); max-width: 65ch; }
+  .narrative em { color: var(--color-accent); font-style: italic; }
+  .decision {
+    grid-column: 1 / -1;
+    border: 1px solid var(--color-accent);
+    padding: var(--space-6);
+  }
+  .decision .label { color: var(--color-accent); }
+  .next-steps { grid-column: 1 / -1; }
+  .next-steps ol {
+    list-style: none;
+    counter-reset: step;
+    padding: 0;
+    margin: 0;
+  }
+  .next-steps li {
+    counter-increment: step;
+    padding-left: 32px;
+    position: relative;
+    margin-bottom: var(--space-3);
+  }
+  .next-steps li::before {
+    content: counter(step, decimal-leading-zero);
+    position: absolute;
+    left: 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    color: var(--color-accent);
+    letter-spacing: -0.02em;
+  }
+  footer {
+    border-top: 1px solid var(--color-border);
+    padding-top: var(--space-3);
+    display: flex;
+    gap: var(--space-6);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--color-fg-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+  @media print {
+    body { background: #FAFAF8; min-height: auto; }
+    .doc { padding: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+  }
+</style>
+</head>
+<body>
+<div class="doc">
+  <header>
+    <div class="label">Q3 / Operating review</div>
+    <h1>Margin compression returned in Q3.</h1>
+    <p class="subtitle">Three input categories drove the deterioration; pricing actions lagged.</p>
+  </header>
+
+  <section class="key-metric">
+    <div class="label">Op. margin vs. PY</div>
+    <div class="num">−180bps</div>
+    <div class="caption">Down from −20bps in Q2</div>
+  </section>
+
+  <section class="narrative">
+    <div class="label">Context</div>
+    <p>Freight, packaging, and contract labor together account for 155 of the 180 bps decline. Pricing actions in July recaptured roughly 40 bps; the remainder rolls forward as a Q4 headwind.</p>
+    <p>The wholesale segment carries two-thirds of the variance. Retail and direct channels are within tolerance.</p>
+  </section>
+
+  <section class="decision">
+    <div class="label">Decision required</div>
+    <p>Accelerate the <em>second pricing pass</em> from Q1 2027 to Q4 2026. Expand the contract-labor sourcing pilot to two additional sites. Decision required by board approval, 2026-05-31.</p>
+  </section>
+
+  <section class="next-steps">
+    <div class="label">Next steps</div>
+    <ol>
+      <li>Pricing committee approval — week of 2026-05-17</li>
+      <li>Sourcing pilot expansion plan — submit by 2026-05-24</li>
+      <li>Freight contract renegotiation — open Q1 talks by 2026-06-15</li>
+    </ol>
+  </section>
+
+  <footer>
+    <span>2026-05-10</span>
+    <span>Andre Shilenko, CFO</span>
+    <span>v1.0</span>
+  </footer>
+</div>
+</body>
+</html>

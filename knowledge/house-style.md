@@ -1,0 +1,55 @@
+# House Style — Cross-Medium Aesthetic Specification
+
+**Revision:** 2026-05-13 · **Version:** 1.5.0
+
+## Aesthetic Statement
+
+Modern Tech minimalism with editorial sophistication. Geometric sans throughout (Inter), restrained weight usage (400/500 default), one rich-but-muted accent (Teal 900 #134E4A), warm-white paper for documents and stark white for screens, italic emphasis only (no serif fork). Hierarchy is carried by size, color, space, and tracking — not by weight contrast.
+
+## How to Use This Spec
+
+This file is the top-level loader. Implementations should read the slice files below for the specific tokens they need. Medium-specific skills load only the relevant slices (e.g., print formats skip `motion.md`).
+
+| Slice | Defines | Path |
+|---|---|---|
+| Type stack | Fonts, weights, sizes, tracking, hierarchy without weight | [`type-stack.md`](type-stack.md) |
+| Color | Foreground / background / accent palette + usage by surface | [`color.md`](color.md) |
+| Density | Spacing scale, line-heights, max widths, density limits per medium | [`density.md`](density.md) |
+| Motion | Timing tokens, easing tokens, reveal patterns, reduced-motion fallbacks | [`motion.md`](motion.md) |
+| Examples | Annotated reference mockups — the "this is right" anchor | [`examples/`](examples/) |
+
+## The Won't-Do List (Forbidden Patterns)
+
+Expanded with examples in [`../../agents/house-designer/references/anti-patterns.md`](../../agents/house-designer/references/anti-patterns.md).
+
+- Gradients of any kind (`linear-gradient`, `radial-gradient`, `conic-gradient`)
+- Multiple accent colors in the same artifact
+- Pure black `#000000` text (use `#0A0A0A` on warm white, `#0A0A0A` on stark white)
+- Bold weights (600/700) without explicit user opt-in
+- Serif typefaces anywhere (the system has rejected the editorial fork)
+- Emoji glyphs as visual elements
+- Generic SaaS template tropes — purple hero gradients, "trusted by" logo strips, three-feature-card-with-icon grids, pastel pill backgrounds
+- Box shadows beyond a single subtle layer (max: `0 1px 2px rgba(0,0,0,0.04)`)
+- Border radii > 12px
+- Parallax, bouncy springs, attention-seeking motion
+
+## Locked Aesthetic Decisions (Source: 2026-05-10 brainstorming session)
+
+1. **Primary type family:** Inter. Default weights 400/500. Weights 600/700 reserved for explicit user request. No emoji in body content.
+2. **Single accent color:** Teal 900 `#134E4A`. Single-accent rule. (See carve-out #5.)
+3. **Background by surface:** Documents/print → warm white `#FAFAF8`. GUI/screens → stark white `#FFFFFF`.
+4. **Emphasis treatment:** Inter italic for chat (.medium-gui), email (.medium-email), and slide (.medium-slide) mediums. Inter bold (weight 700) for document (.medium-document) mediums — briefings, memos, status briefs, one-pagers — per the v1.4.0 carve-out approved 2026-05-13. The italic-only rule held for literary prose; status briefs and operational documents are scanned more than read and need heavier emphasis to surface load-bearing facts at body size. Accent color (`#134E4A`) applies in both treatments. No serif typefaces anywhere.
+5. **Slide-emphasis carve-out (approved 2026-05-12):** Slide / HTML-presentation surfaces may use deep-teal emphasis (`#0A2A28`) with the bright accent (`#3FB8A8`). This is a single-accent-**family** rule — the bright accent is a lightness sibling of `#134E4A`, not a different hue. Restricted exclusively to slide / HTML-presentation surfaces; GUI dashboards, documents, email, and print remain on the canonical light surfaces. See [`color.md`](color.md) for the surface rules table and class application.
+6. **Surface-hierarchy color inheritance (approved 2026-05-13, MUST-implement 2026-05-13):** Primary surfaces (top-level panels/sections) are theme authorities — each MUST declare the five canonical chrome slots (`--surface-chrome-bg`, `--surface-chrome-fg`, `--surface-chrome-fg-secondary`, `--surface-chrome-button-bg`, `--surface-chrome-button-border`) on its root, wrapped in a DOM element (not a fragment) so child modals/drawers/popovers are DOM descendants. Secondary surfaces MUST read chrome from those variables via CSS cascade — never from color literals — and MUST use the canonical `.hsr-chrome-button` / `.hsr-chrome-icon-button` classes for any button rendered on chrome. Independent surfaces (global modals, system notifications) and semantic-color overrides (destructive, error, success) are explicit exceptions. See [`color.md`](color.md#surface-hierarchy-color-inheritance-approved-2026-05-13) for slot definitions, scope, examples, the canonical chrome-button classes, and the required implementation pattern.
+7. **Canonical chip primitives (approved 2026-05-13, MUST-implement 2026-05-13):** Categorical chips (phase, type, complexity, tag, account, status) MUST use the canonical `.hsr-chip` primitive with state variants — `default` (neutral outlined), `is-current` (accent outlined, one-per-scope), `is-done` (muted dashed), `is-success` / `is-danger` / `is-warning` (semantic carve-outs). Pastel-pill recipes (`bg-{hue}-100 text-{hue}-700`) and per-category color maps (e.g. `PHASE_COLORS`, `COMPLEXITY_COLORS`) are anti-patterns — they regress to multi-hue categorical hierarchy that the single-accent rule rejects. Hierarchy belongs to state and copy; hue is reserved for the accent role and the three semantic carve-outs. Chip variants read from `--chip-*` tokens (defaults in [`tokens.css`](../../plugins/house-style-render/shared/tokens.css)); surface themes override those tokens on dark chrome to flip polarity automatically. Three companion primitives (`.hsr-mono-id`, `.hsr-label`, `.hsr-status-italic`) cover identifier / iteration-counter / transient-status roles that aren't chips. See [`color.md`](color.md#chip-primitives-approved-2026-05-13) for the full primitive catalog, polarity behavior, and migration notes.
+
+## Changelog
+
+- **1.0.0 (2026-05-10):** Initial specification — locked decisions from brainstorming session.
+- **1.1.0 (2026-05-12):** Added decision #5 — slide-emphasis carve-out approved as the only exception to the single-accent rule, scoped exclusively to slide / HTML-presentation surfaces.
+- **1.2.0 (2026-05-13):** Added per-medium table treatment rules to [`type-stack.md`](type-stack.md#tables). Tables explicitly inherit body Inter across all mediums (fixing a UA-stylesheet inheritance gap). `.medium-document` and `.medium-email` use sentence-case body-size `<th>` rows so prose-embedded tables sit inside the reading rhythm; `.medium-gui` retains the small-caps label treatment for dashboard lookup grids. `.medium-slide` is not yet decided and inherits the GUI default.
+- **1.3.0 (2026-05-13):** Added decision #6 — surface-hierarchy color inheritance. Secondary surfaces (modals, drawers, popovers) scoped to a primary surface's context inherit its chrome (header background, header text, header buttons). Independent global surfaces and semantic-color overrides are explicit exceptions. The single-accent rule applied to surface hierarchy: don't introduce a new chrome color where you can inherit one. See [`color.md`](color.md#surface-hierarchy-color-inheritance-approved-2026-05-13).
+- **1.3.1 (2026-05-13):** Hardened decision #6 from SHOULD to MUST. Defined the five canonical chrome slots (`--surface-chrome-bg`, `--surface-chrome-fg`, `--surface-chrome-fg-secondary`, `--surface-chrome-button-bg`, `--surface-chrome-button-border`) as house-style tokens; consumers fill values per primary-surface. Required implementation: primary surfaces declare the slots on their root; child surfaces consume them via CSS cascade; color literals in child surfaces are an anti-pattern that fails review. Defaults added to `tokens.css`.
+- **1.3.2 (2026-05-13):** Added canonical chrome-button classes to `components.css` — `.hsr-chrome-button` (solid-ish pill button with bg + border) and `.hsr-chrome-icon-button` (transparent icon-only button). Both read from the five chrome slots and implement default, hover, focus-visible, and disabled states via `color-mix()` against `--surface-chrome-fg`, so hover behavior is consistent across any theme polarity (light-on-dark, dark-on-light). Chrome buttons MUST use these classes; re-implementing hover math in consumers is now an anti-pattern. Also documented the fragment-vs-div constraint discovered when implementing the rule in NCC — primary-surface render root must be a DOM element, not a fragment, so sibling-rendered child surfaces are DOM descendants and inherit via cascade.
+- **1.4.0 (2026-05-13):** Document-medium emphasis carve-out. Amended decision #4 — emphasis in `.medium-document` surfaces (briefings, memos, status briefs, one-pagers) renders as Inter bold (weight 700) instead of italic. Italic remains the canonical treatment for chat/email/slide mediums. Rationale: operational documents are scanned for load-bearing facts (dates, owners, status counts); at 12px body size italic is subtle to the point of being missed, while bold draws the scan-eye reliably. Decided via A/B preview on the Halozyme status brief; user picked the bold variant. Consumers rendering document-medium content MUST load Inter weight 700 in addition to 400/500. See [`type-stack.md`](type-stack.md#emphasis) for the per-medium emphasis table and the updated weight usage rule.
+- **1.5.0 (2026-05-13):** Added decision #7 — canonical chip primitives. Introduced `.hsr-chip` with six state variants (`default` / `is-current` / `is-done` / `is-success` / `is-danger` / `is-warning`) plus three non-chip companions (`.hsr-mono-id`, `.hsr-label`, `.hsr-status-italic`) to `house-style-render/shared/components.css`. Added 14 chip tokens to `tokens.css` (`--chip-*` family) with light-surface defaults; surface-theme classes override these to flip polarity automatically on dark chrome. Forbids `bg-{hue}-100 text-{hue}-700` pastel-pill recipes and per-category color maps. Decided after rendering 2026-05-13-lab-sr-card-chips.html and getting sign-off; migration of NCC LabPanel.tsx is the first consumer.

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Q3 Review — Example Deck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-fg: #0A0A0A;
+    --color-fg-secondary: #374151;
+    --color-fg-tertiary: #6B7280;
+    --color-bg: #FFFFFF;
+    --color-border: #E5E7EB;
+    --color-accent: #134E4A;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--color-bg);
+    color: var(--color-fg);
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-weight: 400;
+    overflow-y: auto;
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+  }
+  .slide {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    padding: clamp(48px, 8vw, 96px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    page-break-after: always;
+  }
+  .slide .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-accent);
+    margin-bottom: 24px;
+  }
+  .slide h1 {
+    font-size: clamp(40px, 6vw, 72px);
+    font-weight: 500;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    color: var(--color-fg);
+  }
+  .slide .subtitle {
+    font-size: clamp(20px, 2.4vw, 28px);
+    font-style: italic;
+    font-weight: 400;
+    color: var(--color-fg-secondary);
+    margin-top: 16px;
+    max-width: 70%;
+  }
+  .slide h2 {
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 500;
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+    margin-bottom: 32px;
+  }
+  .slide .body { font-size: 18px; line-height: 1.5; max-width: 60ch; color: var(--color-fg-secondary); }
+  .slide em { color: var(--color-accent); font-style: italic; }
+  .metric-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    margin-top: 48px;
+  }
+  .metric .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-feature-settings: "tnum";
+    font-size: clamp(40px, 5vw, 60px);
+    font-weight: 500;
+    color: var(--color-accent);
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .metric .caption {
+    margin-top: 8px;
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-fg-tertiary);
+  }
+  .slide-end {
+    background: #0A0A0A;
+    color: #FAFAF8;
+  }
+  .slide-end .label { color: var(--color-accent); }
+  .slide-end h1 { color: #FAFAF8; }
+  .slide-number {
+    position: fixed;
+    bottom: 24px;
+    right: 32px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--color-fg-tertiary);
+    letter-spacing: 0.12em;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+  }
+  @media print {
+    .slide-number { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<section class="slide">
+  <div class="label">Q3 2026 / Board Review</div>
+  <h1>Margin compression<br>returned in Q3.</h1>
+  <p class="subtitle">Three input categories drove the deterioration; pricing actions lagged.</p>
+  <div class="slide-number">01 / 04</div>
+</section>
+
+<section class="slide">
+  <div class="label">The data</div>
+  <h2>Where the margin went.</h2>
+  <div class="metric-grid">
+    <div class="metric">
+      <div class="num">−180bps</div>
+      <div class="caption">Op. margin Δ</div>
+    </div>
+    <div class="metric">
+      <div class="num">+4.2%</div>
+      <div class="caption">Revenue Δ</div>
+    </div>
+    <div class="metric">
+      <div class="num">12.4%</div>
+      <div class="caption">Gross margin</div>
+    </div>
+  </div>
+  <div class="slide-number">02 / 04</div>
+</section>
+
+<section class="slide">
+  <div class="label">Analysis</div>
+  <h2>Three categories.<br>One pattern.</h2>
+  <p class="body">Freight, packaging, and contract labor together account for <em>155 of the 180 basis points</em>. Pricing taken in July recaptured roughly 40 bps; the remainder rolls forward as a Q4 headwind. Wholesale carries two-thirds of the variance.</p>
+  <div class="slide-number">03 / 04</div>
+</section>
+
+<section class="slide slide-end">
+  <div class="label">Recommendation</div>
+  <h1>Accelerate pricing.<br>Expand sourcing.</h1>
+  <p class="subtitle" style="color:#D1D5DB">Decision required by 2026-05-31.</p>
+  <div class="slide-number">04 / 04</div>
+</section>
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide');
+  let current = 0;
+  let wheelLock = false;
+  let touchStartY = null;
+
+  function goTo(n) {
+    n = Math.max(0, Math.min(slides.length - 1, n));
+    if (n === current) return;
+    current = n;
+    slides[current].scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function next() { goTo(current + 1); }
+  function prev() { goTo(current - 1); }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown') {
+      e.preventDefault(); next();
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp') {
+      e.preventDefault(); prev();
+    } else if (e.key === 'Home') {
+      e.preventDefault(); goTo(0);
+    } else if (e.key === 'End') {
+      e.preventDefault(); goTo(slides.length - 1);
+    }
+  });
+
+  document.addEventListener('wheel', (e) => {
+    if (wheelLock) return;
+    if (Math.abs(e.deltaY) < 30) return;
+    wheelLock = true;
+    if (e.deltaY > 0) next(); else prev();
+    setTimeout(() => { wheelLock = false; }, 500);
+  }, { passive: true });
+
+  document.addEventListener('touchstart', (e) => {
+    touchStartY = e.touches[0].clientY;
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    if (touchStartY === null) return;
+    const dy = e.changedTouches[0].clientY - touchStartY;
+    if (Math.abs(dy) > 60) {
+      if (dy < 0) next(); else prev();
+    }
+    touchStartY = null;
+  }, { passive: true });
+
+  // Intersection Observer to track current slide on scroll
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
+        current = Array.from(slides).indexOf(entry.target);
+      }
+    });
+  }, { threshold: [0.5] });
+  slides.forEach((s) => observer.observe(s));
+})();
+</script>
+</body>
+</html>

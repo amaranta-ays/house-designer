@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>GUI Module — Example</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-fg: #0A0A0A;
+    --color-fg-secondary: #374151;
+    --color-fg-tertiary: #6B7280;
+    --color-bg: #FFFFFF;
+    --color-bg-subtle: #F9F9FB;
+    --color-border: #E5E7EB;
+    --color-accent: #134E4A;
+    --space-2: 8px; --space-3: 12px; --space-4: 16px;
+    --space-6: 24px; --space-8: 32px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--color-bg);
+    color: var(--color-fg);
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 1.55;
+    letter-spacing: -0.01em;
+    padding: 48px;
+  }
+  .module {
+    max-width: 720px;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+  .module-header {
+    padding: var(--space-6);
+    border-bottom: 1px solid var(--color-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .module-header h3 {
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+  }
+  .module-header .meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-fg-tertiary);
+  }
+  .module-body { padding: var(--space-6); }
+  .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .row:last-child { border-bottom: none; }
+  .row .label { font-size: 14px; color: var(--color-fg-secondary); }
+  .row .value {
+    font-family: 'JetBrains Mono', monospace;
+    font-feature-settings: "tnum";
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--color-fg);
+  }
+  .row .value.accent { color: var(--color-accent); }
+  .module-footer {
+    padding: var(--space-3) var(--space-6);
+    background: var(--color-bg-subtle);
+    border-top: 1px solid var(--color-border);
+    border-radius: 0 0 8px 8px;
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-3);
+  }
+  .btn {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    padding: var(--space-2) var(--space-4);
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 120ms cubic-bezier(0,0,0.2,1);
+  }
+  .btn-primary {
+    background: var(--color-accent);
+    color: var(--color-bg);
+  }
+  .btn-primary:hover { background: #0E3D3A; }
+  .btn-secondary {
+    background: transparent;
+    color: var(--color-fg);
+    border: 1px solid var(--color-border);
+  }
+  .btn-secondary:hover { background: var(--color-bg-subtle); }
+  a {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition-duration: 0.01ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="module">
+  <div class="module-header">
+    <h3><em>Q3</em> margin compression</h3>
+    <span class="meta">Updated 2026-05-10</span>
+  </div>
+  <div class="module-body">
+    <div class="row">
+      <span class="label">Operating margin Δ vs. PY</span>
+      <span class="value accent">−180bps</span>
+    </div>
+    <div class="row">
+      <span class="label">Revenue Δ</span>
+      <span class="value">+4.2%</span>
+    </div>
+    <div class="row">
+      <span class="label">Gross margin</span>
+      <span class="value">12.4%</span>
+    </div>
+    <div class="row">
+      <span class="label">Wholesale segment variance</span>
+      <span class="value">2/3</span>
+    </div>
+    <div class="row">
+      <span class="label">Detail</span>
+      <span class="value"><a href="#">Open analysis →</a></span>
+    </div>
+  </div>
+  <div class="module-footer">
+    <button class="btn btn-secondary">Dismiss</button>
+    <button class="btn btn-primary">Open full memo</button>
+  </div>
+</div>
+
+</body>
+</html>
