@@ -17,6 +17,48 @@
 
 Note: only weights 400 and 500 are loaded by default. Adding 600/700 requires an explicit user opt-in (documented in the artifact's frontmatter or top-of-file comment).
 
+### Slide-Typeface Carve-out (approved 2026-09-05)
+
+`deck-studio`'s generated decks are set in **Calibri**, not Inter.
+
+| Use | Family | Token | Fallbacks |
+|---|---|---|---|
+| deck-studio decks | Calibri | `font.sans_slide` | `Carlito, 'Segoe UI', sans-serif` |
+
+**Scope, narrowly.** This applies to decks produced by `deck-studio`
+(`C:\Users\essef\deck-studio`) and nothing else. GUI, document, email, print and
+CLI stay on Inter, and so does the older `.medium-slide` path in
+`components.css` — that class is not what deck-studio renders. Two slide
+renderers therefore differ in typeface; if `.medium-slide` is ever retired in
+favour of deck-studio, this row should absorb it rather than persist beside it.
+
+**Size does not transfer between typefaces.** Calibri's x-height is 0.469 of its
+nominal size where Inter's is 0.547, so the same `font-size` reads about 14%
+smaller. deck-studio carries a single `--ds-type-scale` multiplier set to
+**1.07**, which is 0.92 x 0.547 / 0.469: a deliberate 8% optical reduction
+expressed against Calibri's metrics. The number looks like an enlargement and
+is not. Matching cap heights instead would give 1.055; x-height was chosen
+because it governs body text, where legibility is decided.
+
+**Anything that changes the deck typeface must re-derive that multiplier.**
+Carrying 1.07 onto a different face silently rescales every deck.
+
+**Portability, and why Carlito sits in the stack (amended 2026-09-05).** Calibri
+ships with Windows and Office and is absent from most Macs and Linux machines.
+It is also **proprietary and must never be embedded** — a deck goes to clients,
+and embedding it would be redistributing a Microsoft font.
+
+So the fallback names **Carlito**, which deck-studio vendors at
+`deckstudio/fonts/` under the SIL OFL and embeds as `@font-face` on export,
+behind `local('Calibri')`. Carlito is metric-compatible with Calibri, which is
+what keeps the 1.07 multiplier above correct on a machine that has neither font
+installed. A viewer with Calibri uses it and never downloads the payload;
+everyone else gets metric-identical bytes we are licensed to ship.
+
+Inter has the same portability problem for a different reason — it is not a
+system font anywhere — and is not embedded, because no medium other than decks
+exports a self-contained file.
+
 ## Weight Usage
 
 | Weight | Permitted use |

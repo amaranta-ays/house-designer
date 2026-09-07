@@ -94,5 +94,35 @@ The orbit covers both **thinking** (pre-stream, no output yet) and **streaming**
 
 The orbit is *information-carrying* (signals agent activity at known cycle rate) rather than *attention-extractive* (random pulses, gradient sweeps). It earns its motion budget by replacing prose ("the agent is thinking") with a recognizable shape. Any other "live" effect must justify itself the same way or it stays in the forbidden list.
 
+### Mandatory placement (approved 2026-06-04)
+
+The orbit spinner is not just permitted — it is **REQUIRED** whenever the UI initiates async work that takes longer than ~250ms and visibly delays the user's next action. The carve-out above grants permission; this rule asserts the obligation.
+
+**When required:**
+
+| Context | Pattern | Spinner size |
+|---|---|---|
+| Button triggers a network call, file op, or LLM run | Spinner inline beside the label; label transitions from action-name to gerund (`"Backfill"` → `"Backfilling…"`); button MUST be `disabled` while busy | 12-14px, `currentColor` |
+| Data-fetching component during initial load | Spinner inline with the loading text label | 16-24px, accent |
+| Search / filter input awaiting results (debounced or in-flight) | Swap the magnifier icon for a spinner inside the input chrome | 16px, parent fg |
+| Long-running drawer / modal action (>3s, e.g. redistillation) | Spinner near the action button AND a textual ETA ("~3-5 min") | 14-16px |
+| Background poll / passive refresh the user did not initiate | OPTIONAL — show only if interactive elements would mislead the user | 12px |
+
+**Required pairing:**
+
+The spinner alone is not sufficient. Every spinner placement MUST flip a *textual* label too — "Refresh now" → "Refreshing…", "Search" → "Searching…", "Save" → "Saving…". The label change keeps the state semantic for screen readers and reduces flicker confusion when the spinner alone is missed.
+
+**Forbidden alternatives:**
+
+- Text-only loading indicators (`"Refreshing…"`, `"Loading…"`) without an accompanying `OrbitSpinner` — the user has no visual proof the work is still in flight.
+- Animated-text tricks (bouncing periods, marquee ellipses, CSS keyframes on dots) as a substitute for the spinner.
+- Any third-party spinner library or framework default (MUI `CircularProgress`, Bootstrap `.spinner-border`, Tailwind `animate-spin` on a generic SVG, etc.) — the only sanctioned spinner is `<OrbitSpinner />` from `house-style-render-ts`.
+- Showing the spinner *without* changing the label — semantic + visual must flip together.
+
+**The 250ms heuristic:**
+
+If the response can reliably return in <150ms (local SQL queries, in-memory state changes), the spinner is noise — omit it. If the user might click again or assume the action failed before the response arrives (typically >250ms perceived delay), the spinner is required. When in doubt, instrument the operation and decide from the p95 latency.
+
 ## Changelog
+- **1.2.0 (2026-06-04):** Mandatory placement rule added — orbit spinner is now REQUIRED (not just permitted) during any user-initiated async work exceeding ~250ms. Codifies the placement table, the required label-transition pairing, the forbidden alternatives, and the 250ms duration heuristic.
 - **1.1.0 (2026-05-13):** Added Functional Async-State Carve-out — orbit spinner approved as the cross-project agent thinking/streaming indicator.

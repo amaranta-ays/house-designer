@@ -27,7 +27,7 @@ git clone https://github.com/amaranta-ays/house-designer.git ~/ai-lab/agents/hou
 Or pin to a tagged version:
 
 ```bash
-git clone --branch v0.1.0 https://github.com/amaranta-ays/house-designer.git ~/ai-lab/agents/house-designer
+git clone --branch v0.2.0 https://github.com/amaranta-ays/house-designer.git ~/ai-lab/agents/house-designer
 ```
 
 ## Release flow

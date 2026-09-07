@@ -14,8 +14,8 @@
 | `--color-accent` | `#134E4A` | Single accent — Teal 900 |
 | `--color-fg-inverted` | `#FAFAF8` | Primary text on inverted (near-black) surfaces |
 | `--color-fg-secondary-inverted` | `#D1D5DB` | Secondary text on inverted surfaces |
-| `--color-bg-emphasis` | `#0A2A28` | Slide-emphasis surface (slides/HTML-presentations ONLY) |
-| `--color-accent-bright` | `#3FB8A8` | Bright accent on slide-emphasis surfaces ONLY — same teal family as `--color-accent` |
+| `--color-bg-emphasis` | `#0A1F2A` | Slide-emphasis surface (slides/HTML-presentations ONLY) |
+| `--color-accent-bright` | `#4195BE` | Bright accent on slide-emphasis surfaces ONLY — a cyan-blue hue, NOT the `--color-accent` family (see the 2026-09-05 amendment) |
 | `--surface-chrome-bg` | (consumer-defined) | Primary-surface chrome background. Set on the panel root; inherited by child modals/drawers/popovers |
 | `--surface-chrome-fg` | (consumer-defined) | Primary text on the chrome (header titles, button labels at full strength) |
 | `--surface-chrome-fg-secondary` | (consumer-defined) | Secondary text on the chrome (subtitles, default-state icon-button color) |
@@ -44,11 +44,13 @@
 | GUI / screen | `--color-bg-stark` (`#FFFFFF`) | `--color-border-stark` |
 | Slide (light) | `--color-bg-stark` or `--color-bg-warm` per slide intent | `--color-border-stark` |
 | Slide (inverted) | `#0A0A0A` (case-by-case for emphasis slides) | `#374151` — text uses `--color-fg-inverted` (`#FAFAF8`) primary and `--color-fg-secondary-inverted` (`#D1D5DB`) secondary |
-| Slide (emphasis) | `--color-bg-emphasis` (`#0A2A28`) — deep teal | Accent dividers use `--color-accent-bright` (`#3FB8A8`); text uses `--color-fg-inverted` primary and `--color-fg-secondary-inverted` secondary |
+| Slide (emphasis) | `--color-bg-emphasis` (`#0A1F2A`) — cyan-blue | Accent dividers use `--color-accent-bright` (`#4195BE`); text uses `--color-fg-inverted` primary and `--color-fg-secondary-inverted` secondary |
 
 ## Slide-Emphasis Carve-out (approved 2026-05-12)
 
-The single-accent rule has **one approved exception**: slide / HTML-presentation surfaces may use the deep-teal emphasis surface (`#0A2A28`) paired with the bright teal accent (`#3FB8A8`). This is a single-accent-**family** rule — the bright accent is a lightness sibling of `#134E4A`, not a different hue. No other surface (GUI dashboards, documents, email, print) may use these tokens.
+The single-accent rule has **one approved exception**: slide / HTML-presentation surfaces may use the cyan-blue emphasis surface (`#0A1F2A`) paired with the bright cyan-blue accent (`#4195BE`). No other surface (GUI dashboards, documents, email, print) may use these tokens.
+
+**This exception was a single-accent-*family* rule until 2026-09-05, and is no longer.** The pair was deep teal, chosen as a lightness sibling of `#134E4A`. It is now a different hue. See the amendment at the end of this section for what replaced the family justification and why.
 
 **Why slides only:** Presentation surfaces have a different visual brief — they're shown briefly, at distance, often projected. Deep-teal-on-deep-teal carries the brand without the warm-white reference frame that document and screen surfaces rely on. The bright accent stays visible on the deep surface where the canonical `#134E4A` would disappear.
 
@@ -58,9 +60,68 @@ The single-accent rule has **one approved exception**: slide / HTML-presentation
 - Pattern overlay (interlocking SVG, single-accent stroke at low opacity) is permitted on emphasis surfaces; see `frontend-slides` skill for the canonical pattern asset
 
 **What this carve-out does NOT permit:**
-- Using `#3FB8A8` on warm-white or stark-white surfaces — that's a single-accent-rule violation
-- Using `#0A2A28` as a "dark mode" for GUI dashboards or documents — those surfaces remain light-mode only
+- Using `#4195BE` on warm-white or stark-white surfaces — that's a single-accent-rule violation
+- Using `#0A1F2A` as a "dark mode" for GUI dashboards or documents — those surfaces remain light-mode only
 - A second accent hue (e.g. amber, coral) on emphasis slides — the family rule is one-hue, two-lightness
+
+### Genre-Driven Deck Surface (amendment, approved 2026-09-04)
+
+The 2026-05-12 carve-out is extended from *a slide* to *a deck of a projected genre*. Its own stated rationale — presentation surfaces are "shown briefly, at distance, often projected" — describes an entire walkthrough, not one slide inside it, and does not describe a proposal PDF in an inbox at all.
+
+A deck declares a `genre`. The surface is **derived** from it and is not a user setting:
+
+| `genre` | Surface |
+|---|---|
+| `proposal` | Light — `--color-bg-stark` |
+| `discovery` | Light — `--color-bg-stark` |
+| `walkthrough` | Emphasis — `--color-bg-emphasis` + `--color-accent-bright` |
+| `training` | Emphasis — `--color-bg-emphasis` + `--color-accent-bright` |
+
+Light genres are printed, attached and forwarded, and must survive as a PDF. Emphasis genres are projected in a dim room and never leave the screen.
+
+**This table is exhaustive.** Adding a genre means updating both this table and the `Genre` enum that deck-studio keeps at `deckstudio/model/genre.py`, which raises on an unknown genre rather than defaulting to a surface nobody chose. The classification test: is the deck read on a screen and forwarded, or projected in a room and then discarded?
+
+**Why light decks use `--color-bg-stark` and not `--color-bg-warm`.** The Surface Rules table above permits either for a light slide, "per slide intent" — this records the intent. Stark white is what a deck is read against on a screen before it is ever printed, and it keeps a projected deck and a forwarded deck differing in surface alone rather than in surface and warmth together. Decided from rendered samples in the 2026-08-26 design session; see `ai-lab/docs/superpowers/specs/2026-09-04-deck-studio-design.md` §7.
+
+**Consumer:** `deck-studio` (`C:\Users\essef\deck-studio`). No other surface may derive a background from a genre.
+
+**This amendment does not relax any existing prohibition.** The three prohibitions listed above under the 2026-05-12 carve-out stand unchanged; this widens *when* the emphasis surface may be used, not *what* it permits.
+
+### Emphasis Surface Hue (amendment, approved 2026-09-05)
+
+The emphasis surface moved from deep teal (`#0A2A28` + `#3FB8A8`) to cyan-blue
+(`#0A1F2A` + `#4195BE`). This is a value change to existing tokens, not a new
+pair: nothing gains a token, and the teal pair is retired rather than kept
+alongside.
+
+**What this costs, stated plainly.** The 2026-05-12 carve-out justified itself
+as a single-accent-**family** rule — the bright accent was a lightness sibling
+of `#134E4A`, so the exception widened lightness but never hue. That
+justification is gone. `#4195BE` is a different hue from `#134E4A`, and the
+emphasis surface is now the one place in the house style where a second hue
+appears. The surface and its accent remain a family with each other.
+
+**Why the swap is otherwise safe.** The replacement pair holds the original's
+saturation and lightness and rotates only hue, so weight and depth are
+unchanged. The accent was then lightened until it cleared 5:1 against its own
+surface; a constant-lightness rotation would have landed at 3.45:1, because
+blue reads darker than teal at equal HSL lightness. Measured contrasts on the
+new surface: body text 16.17:1, secondary text 11.47:1, accent 5.04:1 — the
+accent clears AA at body size, which matters because italic emphasis is body
+text, not a large-text exemption.
+
+**Blast radius, audited before the change.** `--color-bg-emphasis` is consumed
+only by `.medium-slide.emphasis` in `components.css`. No source file in
+netsuite-, portfolio- or travel-command-center renders that class today; it
+appears only inside NCC's bundled `dist` CSS, which is build output. The change
+therefore alters no currently rendered surface other than deck-studio's own.
+
+**What this amendment does NOT permit:**
+
+- A third hue anywhere. The exception is one surface, one accent family.
+- `#4195BE` on warm-white or stark-white — still a single-accent-rule violation.
+- Reading this as licence to pick a deck's colours. The surface is derived from
+  genre (see the 2026-09-04 amendment above) and is not an author setting.
 
 ## Accent Usage Map
 
