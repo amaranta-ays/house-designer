@@ -83,7 +83,7 @@ The "infinite loops" and "attention-seeking pulses" prohibitions above apply to 
 | Inline in a button (e.g. "Rendering DOCX…") | 12px | `currentColor` (inherits from button) |
 | Inside avatar bubble (chat thinking + streaming) | 16-18px in 28-32px bubble | white-on-accent |
 | Standalone in chat message body | 20-24px | accent |
-| "Loading-msg" row with text label | 20-24px | accent |
+| "Loading-msg" row with text label | 20-24px | the label's colour (see "Orbit with a label" below) |
 | Full-pane / empty-state loader | 32-48px | accent |
 
 ### Behavioral rule — same orbit, both states
@@ -103,7 +103,7 @@ The orbit spinner is not just permitted — it is **REQUIRED** whenever the UI i
 | Context | Pattern | Spinner size |
 |---|---|---|
 | Button triggers a network call, file op, or LLM run | Spinner inline beside the label; label transitions from action-name to gerund (`"Backfill"` → `"Backfilling…"`); button MUST be `disabled` while busy | 12-14px, `currentColor` |
-| Data-fetching component during initial load | Spinner inline with the loading text label | 16-24px, accent |
+| Data-fetching component during initial load | Spinner inline with the loading text label | 16-24px, the label's colour (see "Orbit with a label" below) |
 | Search / filter input awaiting results (debounced or in-flight) | Swap the magnifier icon for a spinner inside the input chrome | 16px, parent fg |
 | Long-running drawer / modal action (>3s, e.g. redistillation) | Spinner near the action button AND a textual ETA ("~3-5 min") | 14-16px |
 | Background poll / passive refresh the user did not initiate | OPTIONAL — show only if interactive elements would mislead the user | 12px |
@@ -123,6 +123,37 @@ The spinner alone is not sufficient. Every spinner placement MUST flip a *textua
 
 If the response can reliably return in <150ms (local SQL queries, in-memory state changes), the spinner is noise — omit it. If the user might click again or assume the action failed before the response arrives (typically >250ms perceived delay), the spinner is required. When in doubt, instrument the operation and decide from the p95 latency.
 
+### The main spinner in every medium, mockups included (approved 2026-10-25)
+
+The orbit spinner is the house style's main — and only — busy indicator in every medium and at every stage of a design: production UI, HTML outputs, and the mockups and previews shown for sign-off before production code is written. A mockup is where a look gets approved, so it must show the spinner that will ship.
+
+| Where | Use |
+|---|---|
+| React (NCC dashboard and other TS front-ends) | `<OrbitSpinner size={n} label="…" />` from `house-style-render-ts` |
+| HTML/CSS outputs that can load the shared assets | `<svg class="orbit orbit-20"><use href="…/shared/graphics/orbit-spinner.svg#orbit"/></svg>` |
+| Self-contained HTML mockups and previews | Paste the canonical `<symbol id="orbit">` from `orbit-spinner.svg` into the page once and reference it with `<svg class="orbit-14"><use href="#orbit"/></svg>`; keep the geometry and SMIL timing exactly as in the asset |
+
+Forbidden in mockups as in production: a "stand-in" spinner (a bordered ring with a CSS `spin` keyframe, a generic `animate-spin` icon, an animated ellipsis), even when labelled as a placeholder. Size and colour follow the sizing table above; a busy chat or tool-status bubble uses the orbit both in the avatar (white on the bubble colour) and beside the gerund label (`currentColor`).
+
+### Orbit with a label: one colour, upright (approved 2026-11-06)
+
+When the orbit sits beside text that says what is running (a pipeline status such as "Pipeline · Design", "Running · Build (2/3)", a busy label such as "Saving…", a loading row), **the orbit and its text are one colour, and the text is upright, never italic.**
+
+| Surface | Colour of the orbit and its text |
+|---|---|
+| Dark chrome (dark headers, chrome bars, dark cards) | White: the surface's primary foreground (`--surface-chrome-fg`, `--chip-fg` on dark chrome; `#FAFAF8` warm white) |
+| Light surfaces | The surface's primary text colour (white would not show) |
+| Inside a button | `currentColor`, as before: the button's text colour is the label's colour |
+
+- **Not the accent, not a pale tint of it.** On dark chrome, light teal and light cyan text read as a faded state, not as "working"; the motion of the orbit already carries the state.
+- **Not italic.** The orbit is the emphasis; italic on top of motion is a second signal and is harder to read at 11px on dark chrome. `.hsr-status-italic` stays for *still* transients with no orbit ("No reason recorded", a stale-review note); it is never paired with the orbit.
+- **No leading dot.** The orbit is the leading mark; a dot before it (as `.hsr-status-italic::before` draws) doubles it.
+- An orbit standing alone, without a label (full-pane loader, chat message body), keeps the sizing table above.
+
+Existing placements that pair the orbit with accent or italic text migrate when they are next touched; NCC's Lab SR header is the first (2026-11-06, mock `netsuite-command-center/docs/superpowers/specs/2026-11-06-lab-sr-header-readability-mock.html`).
+
 ## Changelog
+- **1.4.0 (2026-11-06):** Orbit with a label: the orbit and its text share one colour (white on dark chrome; the surface's primary text colour on light surfaces), upright, with no leading dot; `.hsr-status-italic` is never paired with the orbit. The two sizing/placement rows that gave a labelled orbit the accent now point here. Operator decision after the NCC Lab SR header mock ("always in white, both the spinner and its streaming text").
+- **1.3.0 (2026-10-25):** The orbit spinner is the main spinner in every medium, including mockups and previews: self-contained HTML mockups inline the canonical symbol; stand-in spinners are forbidden. Prompted by an NCC chat-panel mockup that drew a CSS ring as a placeholder.
 - **1.2.0 (2026-06-04):** Mandatory placement rule added — orbit spinner is now REQUIRED (not just permitted) during any user-initiated async work exceeding ~250ms. Codifies the placement table, the required label-transition pairing, the forbidden alternatives, and the 250ms duration heuristic.
 - **1.1.0 (2026-05-13):** Added Functional Async-State Carve-out — orbit spinner approved as the cross-project agent thinking/streaming indicator.

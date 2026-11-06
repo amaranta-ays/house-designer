@@ -7,6 +7,26 @@
 | Display, body | Inter | Google Fonts | `-apple-system, BlinkMacSystemFont, sans-serif` |
 | Tabular figures, code | JetBrains Mono | Google Fonts | `'SF Mono', 'Cascadia Code', Consolas, monospace` |
 
+### Print-mono divergence (decided 2026-09-09)
+
+`house-style-render`'s **PDF and DOCX adapters set code spans in Courier / Courier New, not JetBrains Mono.** This is a decision, not an unfinished job — a reader who finds it and "corrects" it will reintroduce a bug.
+
+The two media can't be satisfied by the same move. A PDF embeds a subset of whatever font it is handed, so vendoring JetBrains Mono would work there. A `.docx` only *names* fonts: OOXML supports embedding, but python-docx has the content-type constants and no part class that writes one, so the name is resolved by whichever machine opens the file. Naming a font that isn't installed is not a graceful degradation — Word silently substituted **Cambria, a serif**, for every timestamp on the machine this was built against, where JetBrains Mono is present only under Nerd Font family names (`JetBrainsMono NF`/`NFM`/`NFP`). Courier New resolves everywhere.
+
+Vendoring for the PDF alone would leave the two adapters setting the same content in two different faces, which is worse than both being slightly off-spec. The cost is narrow: a code span in these documents carries times, identifiers and figures, all ASCII. Revisit if JetBrains Mono ever becomes reliably installable on the target machines, or if python-docx grows a font-embedding API.
+
+The fallback chain above still applies to **web and GUI surfaces**, which are unaffected.
+
+### DOCX body-font divergence (decided 2026-09-09)
+
+`house-style-render`'s **DOCX adapter sets body text in Calibri, not Inter.** The PDF adapter stays on Inter. Same reasoning as the mono divergence above, applied to the body face — and it took two consumers overriding the default before the adapter was changed rather than each of them working around it.
+
+A PDF **embeds** a subset of whatever font it is handed, so every reader of it sees Inter. A `.docx` only **names** a font, and Word resolves that name on whichever machine opens the file. Inter ships with no operating system: on the machine this was built against it was installed per-user only (`HKCU`, `AppData\Local\Microsoft\Windows\Fonts`), which means present for its author and absent for every recipient. Calibri ships with every Office install on Windows and Mac.
+
+Naming Inter anyway and relying on fallbacks was tried and is recorded as insufficient. Empirical testing on 2026-05-11 (Word 16.0.20026, from the portfolio app's export module) found Word rendering **Times New Roman** for a missing font regardless of `w:altName` in `fontTable.xml`, a `minorFont` patched away from Cambria in the theme, or `w:rFonts` set at both run and Normal-style level. Those three hardening steps are still applied by the adapter — they moved there from the portfolio app on 2026-09-09 so every consumer gets them — but they are defence in depth. The font *name* is what decides the outcome.
+
+The cost is that a day sheet downloaded as `.docx` is set in a different face from the same sheet downloaded as `.pdf`. That is worse than one face everywhere and better than a face nobody chose; the sizes, colour, spacing and layout stay identical. Revisit if OOXML font embedding becomes reachable from python-docx, or if Inter is installed machine-wide for every reader who receives these documents.
+
 **Web font loading (HTML head):**
 
 ```html
@@ -26,7 +46,7 @@ Note: only weights 400 and 500 are loaded by default. Adding 600/700 requires an
 | deck-studio decks | Calibri | `font.sans_slide` | `Carlito, 'Segoe UI', sans-serif` |
 
 **Scope, narrowly.** This applies to decks produced by `deck-studio`
-(`C:\Users\essef\deck-studio`) and nothing else. GUI, document, email, print and
+(the `deck-studio` repo) and nothing else. GUI, document, email, print and
 CLI stay on Inter, and so does the older `.medium-slide` path in
 `components.css` — that class is not what deck-studio renders. Two slide
 renderers therefore differ in typeface; if `.medium-slide` is ever retired in
@@ -34,14 +54,26 @@ favour of deck-studio, this row should absorb it rather than persist beside it.
 
 **Size does not transfer between typefaces.** Calibri's x-height is 0.469 of its
 nominal size where Inter's is 0.547, so the same `font-size` reads about 14%
-smaller. deck-studio carries a single `--ds-type-scale` multiplier set to
-**1.07**, which is 0.92 x 0.547 / 0.469: a deliberate 8% optical reduction
-expressed against Calibri's metrics. The number looks like an enlargement and
-is not. Matching cap heights instead would give 1.055; x-height was chosen
-because it governs body text, where legibility is decided.
+smaller. deck-studio carries a single `--ds-type-scale` multiplier, **0.856**
+since 2026-09-28, which is two factors:
 
-**Anything that changes the deck typeface must re-derive that multiplier.**
-Carrying 1.07 onto a different face silently rescales every deck.
+- **1.07, derived:** 0.92 x 0.547 / 0.469, a deliberate 8% optical reduction
+  expressed against Calibri's metrics. It looks like an enlargement and is
+  not. Matching cap heights instead would give 1.055; x-height was chosen
+  because it governs body text, where legibility is decided.
+- **0.80, judged:** the user reviewed real decks at 1.07, found every size too
+  large, and chose -20% from rendered samples over -35%.
+
+On top of the scale, three headline roles carry their own factor, also set by
+eye on 2026-09-28: statement text x0.55, divider titles x0.5, ordinary slide
+headlines x0.72. Quote text shares the headline's type step and keeps the
+base scale. Rendered at 1920x1080: quote 59px, statement 51px, divider 46px,
+headline 43px, body 30px.
+
+**Anything that changes the deck typeface must re-derive the 1.07 factor --
+and only that one.** Carrying it onto a different face silently rescales every
+deck; the 0.80 and the role factors are about how large a deck should look,
+whatever its face.
 
 **Portability, and why Carlito sits in the stack (amended 2026-09-05).** Calibri
 ships with Windows and Office and is absent from most Macs and Linux machines.
@@ -51,7 +83,7 @@ and embedding it would be redistributing a Microsoft font.
 So the fallback names **Carlito**, which deck-studio vendors at
 `deckstudio/fonts/` under the SIL OFL and embeds as `@font-face` on export,
 behind `local('Calibri')`. Carlito is metric-compatible with Calibri, which is
-what keeps the 1.07 multiplier above correct on a machine that has neither font
+what keeps the 1.07 factor above correct on a machine that has neither font
 installed. A viewer with Calibri uses it and never downloads the payload;
 everyone else gets metric-identical bytes we are licensed to ship.
 

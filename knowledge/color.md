@@ -64,7 +64,9 @@ The single-accent rule has **one approved exception**: slide / HTML-presentation
 - Using `#0A1F2A` as a "dark mode" for GUI dashboards or documents — those surfaces remain light-mode only
 - A second accent hue (e.g. amber, coral) on emphasis slides — the family rule is one-hue, two-lightness
 
-### Genre-Driven Deck Surface (amendment, approved 2026-09-04)
+### Genre-Driven Deck Surface (amendment, approved 2026-09-04) — SUPERSEDED 2026-09-29
+
+*Superseded by "Dark by Default" below. Kept as the record of what the rule was.*
 
 The 2026-05-12 carve-out is extended from *a slide* to *a deck of a projected genre*. Its own stated rationale — presentation surfaces are "shown briefly, at distance, often projected" — describes an entire walkthrough, not one slide inside it, and does not describe a proposal PDF in an inbox at all.
 
@@ -83,9 +85,33 @@ Light genres are printed, attached and forwarded, and must survive as a PDF. Emp
 
 **Why light decks use `--color-bg-stark` and not `--color-bg-warm`.** The Surface Rules table above permits either for a light slide, "per slide intent" — this records the intent. Stark white is what a deck is read against on a screen before it is ever printed, and it keeps a projected deck and a forwarded deck differing in surface alone rather than in surface and warmth together. Decided from rendered samples in the 2026-08-26 design session; see `ai-lab/docs/superpowers/specs/2026-09-04-deck-studio-design.md` §7.
 
-**Consumer:** `deck-studio` (`C:\Users\essef\deck-studio`). No other surface may derive a background from a genre.
+**Consumer:** `deck-studio` (the `deck-studio` repo). No other surface may derive a background from a genre.
 
 **This amendment does not relax any existing prohibition.** The three prohibitions listed above under the 2026-05-12 carve-out stand unchanged; this widens *when* the emphasis surface may be used, not *what* it permits.
+
+### Dark by Default (amendment, approved 2026-09-29)
+
+**A deck renders on the emphasis surface (dark) unless it asks for light.** Its genre plays no part. A deck asks in its meta: `surface: light`, or `surface: emphasis` to say dark explicitly. Absent means emphasis.
+
+| deck meta | Surface |
+|---|---|
+| no `surface` | Emphasis — `--color-bg-emphasis` + `--color-accent-bright` |
+| `surface: emphasis` | Emphasis — `--color-bg-emphasis` + `--color-accent-bright` |
+| `surface: light` | Light — `--color-bg-stark` |
+
+**Why.** This is the user's standing preference, stated 2026-09-29: decks are dark, and light only when specifically requested. Under the 2026-09-04 rule, `proposal` and `discovery` decks rendered light with no way to ask otherwise.
+
+**The light surface keeps its reason; the reason now attaches to the request.** The 2026-09-04 rationale for light still holds for any deck the user wants light: decks that are printed, attached and forwarded must survive as a PDF in someone's inbox. It now attaches to `surface: light`, not to a genre. The choice of `--color-bg-stark` over `--color-bg-warm` for light decks is unchanged.
+
+**Genre keeps every other job.** deck-studio still uses `genre` to decide which decks must cite their sources. **Never change a deck's genre to change its colour:** that silently changes what the deck is validated against.
+
+**Consumer:** `deck-studio` only, as before. The rule lives in `Deck.surface` (`deckstudio/model/deck.py`), and the genre-to-surface mapping is deleted. The vocabulary stays `light` / `emphasis`: "dark" is how the user says `emphasis`, and `surface: dark` is refused rather than accepted as an alias.
+
+**This amendment relaxes no prohibition.** The 2026-05-12 carve-out's three prohibitions stand unchanged. This changes *which decks* use the emphasis surface, not *what* the surface permits.
+
+### Deck Footer in Mid Grey (amendment, approved 2026-10-23)
+
+On slides, the footer's text and the brand mark both take `--color-fg-tertiary`. That is a step quieter than `--color-fg-secondary-inverted`, which the footer used before. The 3.5:1 contrast on the emphasis surface is an accepted departure for chrome. Full rule and rationale: [`density.md`](density.md#deck-cover-footer-and-rhythm-amendment-approved-2026-10-23).
 
 ### Emphasis Surface Hue (amendment, approved 2026-09-05)
 
@@ -270,11 +296,11 @@ Three primitives that look chip-adjacent but are not chips:
 |---|---|
 | `.hsr-mono-id` | Identifier in JetBrains Mono with a subtle background fill — atom refs, ticket IDs, project IDs. Reads as code, not chip. |
 | `.hsr-label` | Inline small-caps label, no border / no fill — iteration counters ("Round 2"), build numbers. Optional `<span class="num">` inside renders the number in accent tabular numerics. |
-| `.hsr-status-italic` | Italic-accent inline status with leading dot — pipeline transients ("Inputs received", "Awaiting inputs"). |
+| `.hsr-status-italic` | Italic-accent inline status with leading dot — still transients with no orbit ("No reason recorded", a stale-review note). Never paired with the orbit: a running status follows [`motion.md`](motion.md#orbit-with-a-label-one-colour-upright-approved-2026-11-06) (one colour with the orbit, upright, no dot). |
 
 ### Anti-patterns (will fail review)
 
-- **Pastel-pill recipes.** Any `bg-{hue}-100 text-{hue}-700` Tailwind pattern is an anti-pattern. Even neutral pastels (slate-100) are wrong shape — chips are outlined, not filled, on the canonical light surface.
+- **Pastel-pill recipes.** Any `bg-{hue}-100 text-{hue}-700` Tailwind pattern is an anti-pattern. Even neutral pastels (slate-100) are wrong shape — chips are outlined, not filled, on the canonical light surface. *One exception exists and it is narrow:* printed output from `house-style-render`'s PDF and DOCX adapters, per carve-out #9 in [`house-style.md`](house-style.md) (approved 2026-09-09, amended v1.8.0), sets a timestamp as a filled Teal 900 badge with white text. It is not a licence for filled chips anywhere else — GUI, email and slide surfaces keep outlined chips, and nothing in the web or React layer inherits it. Since v1.8.0 the badge is the *default* of those two adapters rather than an opt-in; a caller that wants the older unfilled treatment asks for `PdfOptions.memo()`.
 - **Per-category color maps.** `PHASE_COLORS`, `COMPLEXITY_COLORS`, or any record that maps a category value to a hex / utility-class pair. Hue is reserved for the single-accent role and the three semantic carve-outs; everything else differentiates via copy and state.
 - **Decorative bold inside chips.** Chip text is weight 500, never 600/700. If a chip's content needs to read heavier, it's signaling at the wrong layer — promote to a section heading.
 - **Hue as state.** Using `is-current` color outside of `is-current` semantics (e.g., "make this chip teal because the row is selected"). State is reserved for state.
@@ -286,5 +312,5 @@ When migrating an existing surface:
 1. Remove the per-category map entirely. The chip class doesn't need it.
 2. At each call site, replace the dynamic class with `.hsr-chip` plus the appropriate state modifier. Most categorical chips become plain `.hsr-chip` — the copy carries the meaning.
 3. For workflow phases: the *current* phase on a row is `.hsr-chip.is-current`. Other rows showing the same phase value are still `.hsr-chip.is-current` (each row's phase is "the current phase of that row"). For a phase TIMELINE within a single project view, use `.hsr-chip.is-done` for past phases, `.hsr-chip.is-current` for the active one, default for upcoming.
-4. For pipeline status: `running` → `.hsr-status-italic` with the OrbitSpinner; `complete` → `.hsr-chip.is-success`; `error` → `.hsr-chip.is-danger`; `blocked / awaiting inputs` → `.hsr-chip.is-warning` or `.hsr-status-italic` for transients.
+4. For pipeline status: `running` → the OrbitSpinner with an upright label in one colour with it (white on dark chrome; see [`motion.md`](motion.md#orbit-with-a-label-one-colour-upright-approved-2026-11-06), amended 2026-11-06 — this line said `.hsr-status-italic` until then); `complete` → `.hsr-chip.is-success`; `error` → `.hsr-chip.is-danger`; `blocked / awaiting inputs` → `.hsr-chip.is-warning` or `.hsr-status-italic` for transients.
 5. For semantic distinctions that *aren't* one of the four built-in carve-outs (success/danger/warning/current): use copy. If you're reaching for a fifth color, you're solving the wrong problem.
